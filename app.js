@@ -1,10 +1,26 @@
-//setup angular
-var app = angular.module('scotch-todo', ['ionic']);
+var app = angular.module('scotch-todo', ['ionic', 'LocalStorageModule']);
+
 app.config(function (localStorageServiceProvider) {
     localStorageServiceProvider
-      .setPrefix('scotch-todo');
-  });
-  app.controller('main', function ($scope, $ionicModal, localStorageService) { //store the entities name in a variable var taskData = 'task';
+        .setPrefix('scotch-todo')
+});
+
+app.run(function ($ionicPlatform) {
+    $ionicPlatform.ready(function () {
+        if (window.cordova && window.cordova.plugins.Keyboard) {
+ 
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+            cordova.plugins.Keyboard.disableScroll(true);
+        }
+        if (window.StatusBar) {
+            StatusBar.styleDefault();
+        }
+    });
+});
+
+app.controller('main', function ($scope, $ionicModal, localStorageService) { //store the entities name in a variable var taskData = 'task';
+var taskData = 'task';
 
 //initialize the tasks scope with empty array
 $scope.tasks = [];
@@ -43,10 +59,16 @@ $scope.removeTask = function (index) {
      }
 $scope.completeTask = function (index) { 
  //updates a task as completed 
- if (index !== -1) {
+if (index !== -1) {
   $scope.tasks[index].completed = true; 
  } 
-
   localStorageService.set(taskData, $scope.tasks); 
 }
+$scope.openTaskModal = function () {
+	$scope.newTaskModal.show();
+};
+
+$scope.closeTaskModal = function () {
+	$scope.newTaskModal.hide();
+};
 })
